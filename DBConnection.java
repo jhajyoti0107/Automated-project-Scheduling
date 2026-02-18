@@ -10,7 +10,7 @@ public class DBConnection {
         return DriverManager.getConnection(
                 "jdbc:postgresql://localhost:5432/promanage",
                 "postgres",
-                "Jyoti"
+                "Jyoti"   
         );
     }
 }
