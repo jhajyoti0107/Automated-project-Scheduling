@@ -1,47 +1,51 @@
-import database.DBConnection;
-import model.Project;
+package com.promanage;
 
 import java.sql.*;
 import java.util.*;
 
 public class ProjectDAO {
 
-    public void addProject(Project p) throws Exception {
+    public void addProject(String title, int deadline, int revenue) {
 
-        Connection con = DBConnection.getConnection();
+        String sql = "INSERT INTO projects(title, deadline, revenue) VALUES (?, ?, ?)";
 
-        String sql =
-                "INSERT INTO projects(title,deadline,revenue) VALUES(?,?,?)";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-        PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, title);
+            ps.setInt(2, deadline);
+            ps.setInt(3, revenue);
 
-        ps.setString(1, p.getTitle());
-        ps.setInt(2, p.getDeadline());
-        ps.setInt(3, p.getRevenue());
+            ps.executeUpdate();
+            System.out.println("Project Added Successfully!");
 
-        ps.executeUpdate();
-        con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public List<Project> getAllProjects() throws Exception {
+    public List<Project> getAllProjects() {
 
         List<Project> list = new ArrayList<>();
+        String sql = "SELECT * FROM projects";
 
-        Connection con = DBConnection.getConnection();
-        Statement st = con.createStatement();
+        try (Connection con = DBConnection.getConnection();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
 
-        ResultSet rs = st.executeQuery("SELECT * FROM projects");
+            while (rs.next()) {
+                list.add(new Project(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getInt("deadline"),
+                        rs.getInt("revenue")
+                ));
+            }
 
-        while (rs.next()) {
-            list.add(new Project(
-                    rs.getInt("id"),
-                    rs.getString("title"),
-                    rs.getInt("deadline"),
-                    rs.getInt("revenue")
-            ));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        con.close();
         return list;
     }
 }
