@@ -1,47 +1,38 @@
-package service;
+package com.promanage;
 
 import java.util.*;
-import model.Project;
 
 public class Scheduler {
 
-    static final int MAX_DAYS = 5;
+    public void scheduleProjects(List<Project> projects) {
 
-    public static void scheduleProjects(List<Project> projects) {
+        projects.sort((a, b) -> b.getRevenue() - a.getRevenue());
 
-        // sort by revenue descending
-        projects.sort((a, b) -> b.revenue - a.revenue);
-
-        Project[] schedule = new Project[MAX_DAYS];
-        boolean[] slotFilled = new boolean[MAX_DAYS];
-
-        int totalRevenue = 0;
+        int maxDays = 7;
+        Project[] schedule = new Project[maxDays];
 
         for (Project p : projects) {
-
-            for (int day = Math.min(MAX_DAYS, p.deadline) - 1; day >= 0; day--) {
-
-                if (!slotFilled[day]) {
+            for (int day = Math.min(maxDays, p.getDeadline()) - 1; day >= 0; day--) {
+                if (schedule[day] == null) {
                     schedule[day] = p;
-                    slotFilled[day] = true;
-                    totalRevenue += p.revenue;
                     break;
                 }
             }
         }
 
-        String[] days = {"Monday","Tuesday","Wednesday","Thursday","Friday"};
+        int totalRevenue = 0;
 
-        System.out.println("\nWeekly Schedule:\n");
-
-        for (int i = 0; i < MAX_DAYS; i++) {
-            if (schedule[i] != null)
-                System.out.println(days[i] + " -> " + schedule[i].title +
-                        " (Revenue: " + schedule[i].revenue + ")");
-            else
-                System.out.println(days[i] + " -> No Project");
+        for (int i = 0; i < maxDays; i++) {
+            System.out.print("Day " + (i + 1) + ": ");
+            if (schedule[i] != null) {
+                System.out.println(schedule[i].getTitle() +
+                        " (Revenue: " + schedule[i].getRevenue() + ")");
+                totalRevenue += schedule[i].getRevenue();
+            } else {
+                System.out.println("No Project");
+            }
         }
 
-        System.out.println("\nTotal Revenue = " + totalRevenue);
+        System.out.println("Total Revenue: " + totalRevenue);
     }
 }
