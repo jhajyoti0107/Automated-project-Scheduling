@@ -1,16 +1,20 @@
-package database;
+package com.promanage;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DBConnection {
 
-    public static Connection getConnection() throws Exception {
+    private static final String URL = "jdbc:postgresql://localhost:5432/promanage";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "Jyoti";
 
-        return DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/promanage",
-                "postgres",
-                "Jyoti"   
-        );
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
